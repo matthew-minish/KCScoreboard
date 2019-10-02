@@ -1,18 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scoreboard.Controller">
    <children>
-      <BarChart fx:id="barChart" layoutY="96.0" prefHeight="624.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+      <BarChart fx:id="barChart" layoutY="96.0" prefHeight="563.0" prefWidth="1280.0" AnchorPane.bottomAnchor="57.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
         <xAxis>
-          <CategoryAxis fx:id="teamAxis" label="Teams" side="BOTTOM" />
+          <CategoryAxis fx:id="teamAxis" side="BOTTOM">
+               <tickLabelFont>
+                  <Font size="24.0" />
+               </tickLabelFont></CategoryAxis>
         </xAxis>
         <yAxis>
-          <NumberAxis fx:id="pointAxis" side="LEFT" />
+          <NumberAxis fx:id="pointAxis" minorTickCount="20" minorTickLength="10.0" side="LEFT" tickUnit="10.0">
+               <tickLabelFont>
+                  <Font size="27.0" />
+               </tickLabelFont></NumberAxis>
         </yAxis>
       </BarChart>
+      <GridPane layoutX="41.0" layoutY="648.0" prefHeight="58.0" prefWidth="1225.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="14.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox spacing="3.0" GridPane.valignment="CENTER">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="bbP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="bbM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="1">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="gbP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="gbM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="2">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="obP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="obM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="3">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="rbP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="rbM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="4">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="ybP104" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="ybM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="5">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="bgP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="bgM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="6">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="ggP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="ggM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="7">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="ogP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="ogM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="8">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="rgP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="rgM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox spacing="3.0" GridPane.columnIndex="9">
+               <children>
+                  <HBox alignment="TOP_CENTER" spacing="5.0">
+                     <children>
+                        <Button fx:id="ygP10" mnemonicParsing="false" onAction="#changeTen" text="+" />
+                        <Button fx:id="ygM10" mnemonicParsing="false" onAction="#changeTen" prefWidth="25.0" text="-" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="94.0" prefWidth="1280.0" text="Cabin Points - October Kids Camp 2019" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font size="64.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

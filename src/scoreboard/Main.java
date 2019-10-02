@@ -15,6 +15,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         controller = new Controller();
         Parent root = FXMLLoader.load(getClass().getResource("scoreboard.fxml"));
+        root.getStylesheets().add("scoreboard/styles.css");
         primaryStage.setTitle("KC Scoreboard");
         primaryStage.setScene(new Scene(root, 1280, 720));
         primaryStage.show();

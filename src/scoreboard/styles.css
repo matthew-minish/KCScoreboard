@@ -1,0 +1,43 @@
+.data0.chart-bar {
+    -fx-bar-fill: blue
+}
+
+.data1.chart-bar {
+    -fx-bar-fill: green
+}
+
+.data2.chart-bar {
+    -fx-bar-fill: orange
+}
+
+.data3.chart-bar {
+    -fx-bar-fill: red
+}
+
+.data4.chart-bar {
+    -fx-bar-fill: yellow
+}
+
+.data5.chart-bar {
+    -fx-bar-fill: blue
+}
+
+.data6.chart-bar {
+    -fx-bar-fill: green
+}
+
+.data7.chart-bar {
+    -fx-bar-fill: orange
+}
+
+.data8.chart-bar {
+    -fx-bar-fill: red
+}
+
+.data9.chart-bar {
+    -fx-bar-fill: yellow
+}
+
+.chart-legend {
+    -fx-opacity: 0;
+}

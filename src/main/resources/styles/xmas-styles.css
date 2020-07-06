@@ -1,3 +1,7 @@
+.root {
+    -fx-background-image: url("../images/xmas-background.jpg");
+}
+
 .chart-bar {
     /*-fx-background-color: rgba(0,168,355,0.05);*/
     -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3) transparent rgba(0,168,355,0.3);
@@ -5,6 +9,18 @@
     -fx-background-position: left center;
     -fx-background-image: url("../images/santa.png");
     -fx-background-size: contain;
+}
+
+.chart-plot-background {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.chart {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.chart-content {
+    -fx-background-color: rgba(0,0,0,0);
 }
 
 .data0.chart-bar {

@@ -198,6 +198,7 @@ public class Controller implements Initializable {
         final Text dataText = new Text(data.getYValue() + "");
         dataText.textProperty().bind(stringProps[teamData.getData().indexOf(data)]);
         dataText.setFont(new Font(30));
+
         node.parentProperty().addListener((ov, oldParent, parent) -> {
             Group parentGroup = (Group) parent;
             parentGroup.getChildren().add(dataText);
@@ -205,12 +206,15 @@ public class Controller implements Initializable {
 
         // Calculate bounds and set position
         node.boundsInParentProperty().addListener((ov, oldBounds, bounds) -> {
+            long yPosition = Math.round(bounds.getMinY() - dataText.prefHeight(-1) * 0.5);
+            if(yPosition > barChart.getLayoutY()) {
+                yPosition = Math.round(barChart.getLayoutY() - dataText.prefHeight(-1));
+            }
+
             dataText.setLayoutX(
                 Math.round(bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2)
             );
-            dataText.setLayoutY(
-                Math.round(bounds.getMinY() - dataText.prefHeight(-1) * 0.5)
-            );
+            dataText.setLayoutY(yPosition);
         });
     }
 }

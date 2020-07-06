@@ -142,7 +142,7 @@
             </VBox>
          </children>
       </GridPane>
-      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="94.0" prefWidth="1280.0" text="Cabin Points - October Kids Camp 2019" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label fx:id="scoreBoardTitle" alignment="CENTER" contentDisplay="CENTER" prefHeight="94.0" prefWidth="1280.0" text="Cabin Points - Kids Camp" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="64.0" />
          </font>

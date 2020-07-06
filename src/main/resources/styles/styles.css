@@ -1,3 +1,24 @@
+.root {
+    -fx-background-color: white;
+}
+
+.chart-bar {
+    /*-fx-background-color: rgba(0,168,355,0.05);*/
+    -fx-border-color: rgba(0,168,355,0.3) rgba(0,168,355,0.3) transparent rgba(0,168,355,0.3);
+}
+
+.chart-plot-background {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.chart {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
+.chart-content {
+    -fx-background-color: rgba(0,0,0,0);
+}
+
 .data0.chart-bar {
     -fx-bar-fill: blue
 }

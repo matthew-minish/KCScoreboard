@@ -62,3 +62,9 @@
 .chart-legend {
     -fx-opacity: 0;
 }
+
+.outline.label .text {
+    -fx-fill: white;
+    -fx-stroke: blue;
+    -fx-stroke-width: 2px;
+}

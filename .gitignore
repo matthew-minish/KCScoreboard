@@ -2,4 +2,6 @@
 /.idea/*
 /out/*
 teamScores.txt
+target/
+dependency-reduced-pom.xml
 

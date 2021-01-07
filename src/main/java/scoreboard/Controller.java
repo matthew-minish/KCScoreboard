@@ -197,7 +197,7 @@ public class Controller implements Initializable {
         final Node node = data.getNode();
         final Text dataText = new Text(data.getYValue() + "");
         dataText.textProperty().bind(stringProps[teamData.getData().indexOf(data)]);
-        dataText.setFont(new Font(40));
+        dataText.setFont(new Font(50));
         dataText.getStyleClass().add("outline");
 
         node.parentProperty().addListener((ov, oldParent, parent) -> {

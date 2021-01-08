@@ -3,8 +3,7 @@ package scoreboard;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,25 +22,50 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 public class Controller implements Initializable {
 
-    private static final String SAVE_FILE_NAME = "teamScores.txt";
+    private static final String SAVE_FILE_NAME = "teamScores.json";
+    private static final String CONFIG_FILE_NAME = "config.json";
+    private static final String DEFAULT_FONT_FAMILY = Font.getDefault().getFamily();
+
+    private Configuration config;
 
     @FXML
     private BarChart<String, Number> barChart;
+
+    @FXML
+    private ComboBox<String> fontFamilySelector;
+
+    @FXML
+    private Button plusFontSizeButton, minusFontSizeButton, plusFontOutlineButton, minusFontOutlineButton;
+    private ObjectProperty<Font> fontProperty;
+
+    @FXML
+    private GridPane settingsGridPane;
+
+    @FXML
+    private CheckBox showSettingsCheckbox;
+
+    private List<Text> textLabels = new ArrayList<>();
 
     private XYChart.Series<String, Number> teamData;
     private String[] teams = {"Blue Boys", "Green Boys", "Orange Boys", "Red Boys", "Yellow Boys", "Blue Girls", "Green Girls", "Orange Girls", "Red Girls", "Yellow Girls"};
@@ -69,10 +93,65 @@ public class Controller implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Load config file if one exists
+        readConfigFile();
+        fontProperty = new SimpleObjectProperty<>(new Font(config.getSelectedFontFamily(), config.getFontSize()));
+
         // Create bars for all teams
         teamData = new XYChart.Series<>();
         barChart.setData(FXCollections.observableArrayList());
         createBarChartAxes();
+
+        config.addObserver((o, arg) -> {
+            writeConfigFile();
+        });
+
+        fontFamilySelector.itemsProperty().setValue(FXCollections.observableArrayList(javafx.scene.text.Font.getFamilies()));
+        fontFamilySelector.getSelectionModel().select(config.getSelectedFontFamily());
+        settingsGridPane.visibleProperty().bind(showSettingsCheckbox.selectedProperty());
+
+        plusFontSizeButton.setOnMouseClicked(event -> {
+            config.setFontSize(config.getFontSize() * 1.075);
+            fontProperty.setValue(new Font(config.getSelectedFontFamily(), config.getFontSize()));
+        });
+
+        minusFontSizeButton.setOnMouseClicked(event -> {
+            config.setFontSize(config.getFontSize() * 0.925);
+            fontProperty.setValue(new Font(config.getSelectedFontFamily(), config.getFontSize()));
+        });
+
+        plusFontOutlineButton.setOnMouseClicked(event -> {
+            config.setFontOutlineProportion(config.getFontOutlineProportion() * 1.075);
+            refreshAllFontOutlines();
+        });
+
+        minusFontOutlineButton.setOnMouseClicked(event -> {
+            config.setFontOutlineProportion(config.getFontOutlineProportion() * 0.925);
+            refreshAllFontOutlines();
+        });
+
+        fontFamilySelector.valueProperty().addListener((observable, oldValue, newValue) -> {
+            config.setSelectedFontFamily(newValue);
+            fontProperty.setValue(new Font(config.getSelectedFontFamily(), config.getFontSize()));
+        });
+    }
+
+    private void readConfigFile() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            config = mapper.readValue(new File(CONFIG_FILE_NAME), Configuration.class);
+        } catch (Exception e) {
+            config = new Configuration(50.0, 0.03, DEFAULT_FONT_FAMILY);
+        }
+    }
+
+    private void writeConfigFile() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.writeValue(new File(CONFIG_FILE_NAME), config);
+        } catch (Exception e) {
+            System.out.println("Failed to write to file");
+        }
     }
 
     /**
@@ -197,7 +276,7 @@ public class Controller implements Initializable {
         final Node node = data.getNode();
         final Text dataText = new Text(data.getYValue() + "");
         dataText.textProperty().bind(stringProps[teamData.getData().indexOf(data)]);
-        dataText.setFont(new Font(50));
+        dataText.fontProperty().bind(fontProperty);
         dataText.getStyleClass().add("outline");
 
         node.parentProperty().addListener((ov, oldParent, parent) -> {
@@ -207,16 +286,36 @@ public class Controller implements Initializable {
 
         // Calculate bounds and set position
         node.boundsInParentProperty().addListener((ov, oldBounds, bounds) -> {
-            long yPosition = Math.round(
-                    bounds.getMinY()
-                    + (bounds.getMaxY() - bounds.getMinY()) / 2
-            );
-
-
-            dataText.setLayoutX(
-                Math.round(bounds.getMinX() + bounds.getWidth() / 2 - dataText.getLayoutBounds().getWidth() / 2)
-            );
-            dataText.setLayoutY(yPosition);
+            updateLabelBounds(dataText, bounds);
+            refreshFontOutline(dataText);
         });
+        dataText.fontProperty().addListener((observable, oldValue, newValue) -> {
+            updateLabelBounds(dataText, node.getBoundsInParent());
+            refreshFontOutline(dataText);
+        });
+
+        textLabels.add(dataText);
+    }
+
+    private void updateLabelBounds(Text dataText, Bounds bounds) {
+        long yPosition = Math.round(
+                bounds.getMinY()
+                        + (bounds.getMaxY() - bounds.getMinY()) / 2
+        );
+
+        dataText.setLayoutX(
+                Math.round(bounds.getMinX() + bounds.getWidth() / 2 - dataText.getLayoutBounds().getWidth() / 2)
+        );
+        dataText.setLayoutY(yPosition);
+    }
+
+    private void refreshFontOutline(Text dataText) {
+        dataText.setStyle(String.format("-fx-stroke-width: %f;", config.getFontSize() * config.getFontOutlineProportion()));
+    }
+
+    private void refreshAllFontOutlines() {
+        for (Text dataText : textLabels) {
+            refreshFontOutline(dataText);
+        }
     }
 }

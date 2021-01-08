@@ -1,7 +1,8 @@
 *.iml
 /.idea/*
 /out/*
-teamScores.txt
+teamScores.json
+config.json
 target/
 dependency-reduced-pom.xml
 

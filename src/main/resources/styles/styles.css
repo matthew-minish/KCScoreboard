@@ -65,6 +65,6 @@
 
 .outline {
     -fx-stroke: white;
-    -fx-stroke-width: 2px;
     -fx-font-weight: bold;
+    -fx-font-family: Consolas;
 }

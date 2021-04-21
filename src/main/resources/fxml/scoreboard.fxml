@@ -157,6 +157,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <GridPane alignment="TOP_CENTER" prefHeight="66.0" prefWidth="70.0" GridPane.rowIndex="1">
@@ -195,6 +196,7 @@
                   <Font size="20.0" />
                </font>
             </Text>
+            <CheckBox id="listenForNetworkChangesCheckbox" fx:id="listenForNetworkChangesCheckbox" mnemonicParsing="false" text="Listen for network changes" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
       <CheckBox fx:id="showSettingsCheckbox" layoutX="1187.0" layoutY="14.0" mnemonicParsing="false" text="Show settings" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="14.0" />

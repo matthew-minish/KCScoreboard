@@ -28,23 +28,19 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Controller implements Initializable {
 
     private static final String SAVE_FILE_NAME = "teamScores.json";
     private static final String CONFIG_FILE_NAME = "config.json";
+    private static final String CHANGES_FILE_NAME = "changesFromAPI.json";
     private static final String DEFAULT_FONT_FAMILY = Font.getDefault().getFamily();
 
     private Configuration config;
@@ -64,6 +60,9 @@ public class Controller implements Initializable {
 
     @FXML
     private CheckBox showSettingsCheckbox;
+
+    @FXML
+    private CheckBox listenForNetworkChangesCheckbox;
 
     private List<Text> textLabels = new ArrayList<>();
 
@@ -96,6 +95,7 @@ public class Controller implements Initializable {
         // Load config file if one exists
         readConfigFile();
         fontProperty = new SimpleObjectProperty<>(new Font(config.getSelectedFontFamily(), config.getFontSize()));
+        listenForNetworkChangesCheckbox.setSelected(config.isListeningForNetworkChanges());
 
         // Create bars for all teams
         teamData = new XYChart.Series<>();
@@ -134,6 +134,22 @@ public class Controller implements Initializable {
             config.setSelectedFontFamily(newValue);
             fontProperty.setValue(new Font(config.getSelectedFontFamily(), config.getFontSize()));
         });
+
+        listenForNetworkChangesCheckbox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
+            config.setListeningForNetworkChanges(newValue);
+        }));
+
+        createCheckForNetworkChangesTask();
+    }
+
+    private void createCheckForNetworkChangesTask() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handleScoreChangesFromFile();
+            }
+        }, 1000, 1000);
     }
 
     private void readConfigFile() {
@@ -141,7 +157,7 @@ public class Controller implements Initializable {
             ObjectMapper mapper = new ObjectMapper();
             config = mapper.readValue(new File(CONFIG_FILE_NAME), Configuration.class);
         } catch (Exception e) {
-            config = new Configuration(50.0, 0.03, DEFAULT_FONT_FAMILY);
+            config = new Configuration(50.0, 0.03, DEFAULT_FONT_FAMILY, false);
         }
     }
 
@@ -181,17 +197,35 @@ public class Controller implements Initializable {
      * @param team Name of team
      */
     private int readScoreFromFile(String team) throws IOException {
-        StringBuilder contentBuilder = new StringBuilder();
-        try(Stream<String> stream = Files.lines( Paths.get(SAVE_FILE_NAME), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> contentBuilder.append(s).append("\n"));
-        } catch (IOException e) {
-            return 0;
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-
-        JsonNode node = mapper.readTree(contentBuilder.toString());
+        JsonNode node = readFileToNode(SAVE_FILE_NAME);
         return node.get(team).asInt(-1);
+    }
+
+    private JsonNode readFileToNode(String filename) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readTree(Paths.get(filename).toFile());
+    }
+
+    /**
+     * Check for any changes in the file that is modified by API to receive network queries
+     */
+    private void handleScoreChangesFromFile() {
+        if (!config.isListeningForNetworkChanges()) return;
+        try {
+            JsonNode tree = readFileToNode(CHANGES_FILE_NAME);
+            if(tree == null) return;
+            tree.fields().forEachRemaining(node -> {
+                if (Arrays.asList(teams).contains(node.getKey())) {
+                    int changeAmount = node.getValue().asInt(0);
+                    modifyPoints(node.getKey(), changeAmount);
+                }
+            });
+            PrintWriter writer = new PrintWriter(new File(CHANGES_FILE_NAME));
+            writer.print("");
+            writer.close();
+        } catch (IOException e) {
+            //e.printStackTrace();
+        }
     }
 
     /**

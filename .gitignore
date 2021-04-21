@@ -3,6 +3,7 @@
 /out/*
 teamScores.json
 config.json
+changesFromAPI.json
 target/
 dependency-reduced-pom.xml
 

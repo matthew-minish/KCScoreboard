@@ -3,38 +3,31 @@ package scoreboard;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.net.*;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Stream;
 
 public class Controller implements Initializable {
 
@@ -63,6 +56,9 @@ public class Controller implements Initializable {
 
     @FXML
     private CheckBox listenForNetworkChangesCheckbox;
+
+    @FXML
+    private Text ipAddressLabel;
 
     private List<Text> textLabels = new ArrayList<>();
 
@@ -96,6 +92,7 @@ public class Controller implements Initializable {
         readConfigFile();
         fontProperty = new SimpleObjectProperty<>(new Font(config.getSelectedFontFamily(), config.getFontSize()));
         listenForNetworkChangesCheckbox.setSelected(config.isListeningForNetworkChanges());
+        refreshIPLabel();
 
         // Create bars for all teams
         teamData = new XYChart.Series<>();
@@ -137,9 +134,27 @@ public class Controller implements Initializable {
 
         listenForNetworkChangesCheckbox.selectedProperty().addListener(((observable, oldValue, newValue) -> {
             config.setListeningForNetworkChanges(newValue);
+            refreshIPLabel();
         }));
 
         createCheckForNetworkChangesTask();
+    }
+
+    private void refreshIPLabel(){
+        if(!config.isListeningForNetworkChanges()) {
+            ipAddressLabel.setText("Not listening on network");
+        } else {
+            try(final DatagramSocket socket = new DatagramSocket()){
+                socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+                String ip = socket.getLocalAddress().getHostAddress();
+                // This has the very bold assumption that the accompanying web API is running on port 15000 and uses the following endpoint URL
+                ipAddressLabel.setText(ip + ":15000/changepoints");
+            } catch (SocketException e) {
+                ipAddressLabel.setText("Socket error");
+            } catch (UnknownHostException e) {
+                ipAddressLabel.setText("Can't get host IP");
+            }
+        }
     }
 
     private void createCheckForNetworkChangesTask() {
